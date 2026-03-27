@@ -1,33 +1,33 @@
-# Changelog
+# 更新日志
 
-All notable changes to this project will be documented in this file.
+本文件记录该项目的主要变更。
 
-## [2026-03-27]
+## [1.0.0] - 2026-03-27
 
-### Added
-- Added three-page flow:
-  - `/` homepage
-  - `/start-analysis` input page
-  - `/analysis-result` result page
-- Added segmented visibility simulation comparison:
+### 新增
+- 新增三页面流程：
+  - `/` 首页
+  - `/start-analysis` 参数填写页
+  - `/analysis-result` 分析结果页
+- 新增分组可见方案对比：
   - `all_visible`
   - `group_only`
   - `hide_selected`
-- Added sensitive-tag expansion and corresponding backend risk factors.
-- Added result-page detail pagination.
-- Added action suggestion module in result page.
+- 新增更多敏感信息选项及对应后端风险系数。
+- 新增结果页人群明细分页功能。
+- 新增结果页行动建议模块。
 
-### Changed
-- Changed audience input model from manual benefit/risk input to automatic estimation by audience type.
-- Changed ratio input from numeric field to slider (percentage based).
-- Changed scoring output to percentage score (0-100) while retaining raw utility value.
-- Changed risk model from single-dimension to three-dimension risk profile:
-  - misunderstanding risk
-  - relationship risk
-  - privacy risk
-- Changed suggestion engine to include estimated score lift per suggestion (`estimatedDeltaScore`).
-- Changed homepage to a centered landing layout with improved information hierarchy.
+### 变更
+- 将受众输入模型从“手动填写好处分/风险分”改为“按受众类型自动估算”。
+- 将占比输入从数字框改为滑动条（百分比）。
+- 将评分输出改为百分制（0-100），并保留原始效用值。
+- 将风险模型从单维风险升级为三维风险画像：
+  - 误解风险
+  - 关系风险
+  - 隐私风险
+- 将建议引擎升级为支持建议提分预估（`estimatedDeltaScore`）。
+- 首页调整为内容居中的落地页布局，优化信息层级。
 
-### Docs
-- Updated `README.md` to reflect current architecture, routes, model logic, and latest capabilities.
-- Added changelog entrypoint in `README.md`.
+### 文档
+- 更新 `README.md`，同步当前路由、模型逻辑与功能能力。
+- 在 `README.md` 中新增更新日志入口。
