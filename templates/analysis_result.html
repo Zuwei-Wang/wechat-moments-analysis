@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>分析结果 - 微信朋友圈分析工具</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>分析结果</h1>
+        <p>下面是本次朋友圈发布的综合评估。</p>
+      </header>
+
+      <section class="card" id="resultCard" hidden>
+        <h2>评估结果</h2>
+        <div id="summary"></div>
+        <h3>三维风险画像</h3>
+        <div id="riskDimensionCards" class="risk-dimension-grid"></div>
+        <h3>行动建议</h3>
+        <div id="actionSuggestionList" class="suggestion-list"></div>
+        <h3>风险贡献 Top 3</h3>
+        <ul id="topRiskList"></ul>
+        <h3>人群明细</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>受众</th>
+              <th>类型</th>
+              <th>基线好处分</th>
+              <th>基线风险分</th>
+              <th>占比权重</th>
+              <th>收益贡献</th>
+              <th>风险贡献</th>
+              <th>净效用</th>
+            </tr>
+          </thead>
+          <tbody id="detailBody"></tbody>
+        </table>
+        <div class="pagination" id="detailPagination">
+          <button type="button" id="detailPrevBtn">上一页</button>
+          <span id="detailPageInfo">第 1 / 1 页</span>
+          <button type="button" id="detailNextBtn">下一页</button>
+        </div>
+        <h3>分组可见方案对比</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>方案</th>
+              <th>评分</th>
+              <th>建议</th>
+            </tr>
+          </thead>
+          <tbody id="visibilityBody"></tbody>
+        </table>
+        <p id="bestScenarioText"></p>
+        <div class="actions split-actions">
+          <a class="button-link" href="/start-analysis">重新填写参数</a>
+          <a class="button-link primary-link" href="/">返回首页</a>
+        </div>
+      </section>
+
+      <p class="error" id="errorBox" hidden></p>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

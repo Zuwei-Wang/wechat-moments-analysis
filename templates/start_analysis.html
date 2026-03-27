@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>开始分析 - 微信朋友圈分析工具</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>开始分析</h1>
+        <p>填写本次朋友圈内容和可见分组信息，下一步查看分析结果。</p>
+      </header>
+
+      <section class="card">
+        <h2>内容设置</h2>
+        <div class="grid-2">
+          <label>
+            内容类型
+            <select id="contentType">
+              <option value="daily">日常记录</option>
+              <option value="achievement">成就展示</option>
+              <option value="emotion">情绪表达</option>
+              <option value="travel">旅游分享</option>
+              <option value="fitness">健身打卡</option>
+            </select>
+          </label>
+          <label>
+            发布时间
+            <select id="postingTime">
+              <option value="morning">早晨（06:00-10:00）</option>
+              <option value="daytime" selected>白天（10:00-18:00）</option>
+              <option value="evening">晚间（18:00-23:00）</option>
+              <option value="late_night">深夜（23:00-06:00）</option>
+            </select>
+          </label>
+          <fieldset class="sensitive-panel">
+            <legend>敏感信息</legend>
+            <p class="hint">可多选。勾选越多，模型会提高潜在风险估计。</p>
+            <div class="tags">
+              <label class="tag-item"><input type="checkbox" value="money" /> 金钱</label>
+              <label class="tag-item"><input type="checkbox" value="emotion" /> 强情绪</label>
+              <label class="tag-item"><input type="checkbox" value="relationship" /> 关系信息</label>
+              <label class="tag-item"><input type="checkbox" value="location" /> 定位行程</label>
+              <label class="tag-item"><input type="checkbox" value="politics" /> 政治观点</label>
+              <label class="tag-item"><input type="checkbox" value="work_confidential" /> 工作机密</label>
+              <label class="tag-item"><input type="checkbox" value="health" /> 健康/病情</label>
+              <label class="tag-item"><input type="checkbox" value="family_conflict" /> 家庭矛盾</label>
+              <label class="tag-item"><input type="checkbox" value="children" /> 孩子信息</label>
+              <label class="tag-item"><input type="checkbox" value="appearance" /> 外貌身材</label>
+              <label class="tag-item"><input type="checkbox" value="luxury" /> 奢侈消费</label>
+              <label class="tag-item"><input type="checkbox" value="complaint" /> 吐槽抱怨</label>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="row-between">
+          <div class="title-with-help">
+            <h2>谁会看到这条朋友圈</h2>
+            <details class="help-popover">
+              <summary title="查看字段说明">?</summary>
+              <div class="help-content">
+                <h3>字段说明</h3>
+                <p><strong>分组可见：</strong>用于“仅分组可见”模拟。勾选表示这类人会出现在该方案里；不勾选表示会被该方案排除。</p>
+                <p><strong>大概占比：</strong>这类人群约占你朋友圈受众的比例，0.3 表示约 30%。</p>
+                <p><strong>受众类型：</strong>算法会根据类型自动估算该人群的好处/风险基线。</p>
+                <p><strong>算法好处分 / 算法风险分：</strong>系统自动计算，并在分析结果里展示。</p>
+                <p><strong>关系敏感度：</strong>关系越复杂，风险越容易被放大。</p>
+              </div>
+            </details>
+          </div>
+          <button id="addAudience" type="button">+ 添加受众</button>
+        </div>
+        <p class="hint">填写方式：拖动占比滑块设置大概比例；选择受众类型后，算法会自动估算好处/风险并在分析结果展示。</p>
+        <table>
+          <thead>
+            <tr>
+              <th>受众名称</th>
+              <th>大概占比（滑动）</th>
+              <th>受众类型</th>
+              <th>关系敏感度</th>
+              <th title="仅用于“仅分组可见”方案：勾选=会被该方案看到">分组可见</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="audienceBody"></tbody>
+        </table>
+        <label>
+          屏蔽哪些人群（用于“屏蔽指定人群”模拟，多个名称用逗号分隔）
+          <input id="blockedAudienceInput" placeholder="如：不熟联系人, 前任" />
+        </label>
+        <div class="actions split-actions">
+          <a class="button-link" href="/">返回首页</a>
+          <button id="startAnalysisBtn" class="primary" type="button">查看分析结果</button>
+        </div>
+      </section>
+
+      <p class="error" id="errorBox" hidden></p>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
