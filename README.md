@@ -199,8 +199,8 @@ U = Σ p_i (B_i - C_i · k_i)
 
 8. 工程质量建设  
 优先级：P0  
-状态：⬜ 待开发  
-验收标准：补齐算法与接口测试并接入 CI，保证主分支可持续交付。
+状态：✅ 已完成  
+验收标准：补齐算法与接口测试并接入 CI，保证主分支可持续交付。（已支持）
 
 ### 下一迭代建议（Sprint）
 
@@ -239,6 +239,11 @@ U = Σ p_i (B_i - C_i · k_i)
 │   ├── index.html
 │   ├── start_analysis.html
 │   └── analysis_result.html
+├── tests/                      # 算法与接口测试
+│   ├── test_api.py
+│   ├── test_copywriting.py
+│   ├── test_evaluation.py
+│   └── test_visibility.py
 └── static/
     ├── style.css
     └── js/                     # 前端模块
@@ -277,12 +282,13 @@ U = Σ p_i (B_i - C_i · k_i)
 
 ## 📌 项目状态
 
-🚧 开发中（MVP v1.2.1）
+🚧 开发中（MVP v1.3.0）
 
 最新版本重点升级：
 - 历史记录落库与趋势分析（支持清空历史）
 - 个性化参数校准（反馈学习并在后续评估生效）
 - 开始分析页重构为多步向导（草稿自动保存、离页提醒）
+- 工程质量建设：新增后端测试与 CI 自动化校验
 
 ---
 
@@ -292,7 +298,7 @@ U = Σ p_i (B_i - C_i · k_i)
 
 ---
 
-## ✅ 当前已实现（MVP v1.2.1）
+## ✅ 当前已实现（MVP v1.3.0）
 
 - 提供 Web 表单输入：
   - 内容类型
@@ -334,6 +340,22 @@ python app.py
 - 首页：`/`
 - 开始分析：`/start-analysis`
 - 分析结果：`/analysis-result`
+
+---
+
+## ✅ 测试与 CI
+
+本地运行测试：
+
+```bash
+python3 -m unittest discover -s tests -p "test_*.py" -v
+```
+
+CI（GitHub Actions）已接入：
+
+- 工作流文件：`.github/workflows/ci.yml`
+- 触发时机：`push` 到 `main/master`、`pull_request`
+- 校验内容：安装依赖并执行完整后端测试集
 
 ---
 
