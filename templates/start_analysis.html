@@ -53,6 +53,15 @@
               <label class="tag-item"><input type="checkbox" value="complaint" /> 吐槽抱怨</label>
             </div>
           </fieldset>
+          <label class="copy-input">
+            朋友圈文案（可选）
+            <textarea
+              id="copyText"
+              rows="4"
+              placeholder="输入你准备发的文案，系统会自动评估情绪强度/炫耀程度/隐私强度并修正风险参数"
+            ></textarea>
+            <span class="hint">不输入则仅使用手动勾选的敏感信息进行评估。</span>
+          </label>
         </div>
       </section>
 
@@ -100,6 +109,6 @@
 
       <p class="error" id="errorBox" hidden></p>
     </main>
-    <script src="/static/app.js"></script>
+    <script type="module" src="/static/js/main.js"></script>
   </body>
 </html>

@@ -16,6 +16,33 @@
       <section class="card" id="resultCard" hidden>
         <h2>评估结果</h2>
         <div id="summary"></div>
+        <h3>文案智能分析</h3>
+        <div id="copyAnalysisCard" class="copy-analysis-card"></div>
+        <h3>为什么是这个分数</h3>
+        <div id="scoreExplanationList" class="explain-list"></div>
+        <h3>参数锁定与方案对比（A/B）</h3>
+        <div class="compare-actions">
+          <button type="button" id="saveSlotABtn">保存当前为方案 A</button>
+          <button type="button" id="saveSlotBBtn">保存当前为方案 B</button>
+          <button type="button" id="applySlotABtn">应用方案 A</button>
+          <button type="button" id="applySlotBBtn">应用方案 B</button>
+          <button type="button" id="clearCompareBtn">清空对比</button>
+        </div>
+        <div class="compare-slot-info">
+          <p id="slotAInfo">方案 A：未保存</p>
+          <p id="slotBInfo">方案 B：未保存</p>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>对比项</th>
+              <th>方案 A</th>
+              <th>方案 B</th>
+              <th>差异（B-A）</th>
+            </tr>
+          </thead>
+          <tbody id="compareBody"></tbody>
+        </table>
         <h3>三维风险画像</h3>
         <div id="riskDimensionCards" class="risk-dimension-grid"></div>
         <h3>行动建议</h3>
@@ -63,6 +90,6 @@
 
       <p class="error" id="errorBox" hidden></p>
     </main>
-    <script src="/static/app.js"></script>
+    <script type="module" src="/static/js/main.js"></script>
   </body>
 </html>

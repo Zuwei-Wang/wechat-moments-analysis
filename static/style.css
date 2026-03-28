@@ -243,6 +243,15 @@ fieldset {
   background: #fbfef9;
 }
 
+.copy-input {
+  grid-column: 1 / -1;
+}
+
+.copy-input textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
 .sensitive-panel .hint {
   margin: 2px 0 8px;
 }
@@ -378,6 +387,105 @@ button.danger {
   font-size: 13px;
 }
 
+.compare-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.compare-slot-info {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.compare-slot-info p {
+  margin: 0;
+  font-size: 13px;
+  color: #4f6450;
+}
+
+.explain-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.copy-analysis-card {
+  border: 1px solid #d8e5d7;
+  border-radius: 10px;
+  background: #f7fcf5;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.copy-analysis-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #274f31;
+}
+
+.copy-analysis-hint {
+  margin: 6px 0;
+  font-size: 13px;
+  color: #4f6450;
+}
+
+.copy-analysis-levels {
+  margin: 8px 0;
+  padding-left: 18px;
+  color: #3f5742;
+  font-size: 13px;
+}
+
+.copy-analysis-tags {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #4f6450;
+}
+
+.explain-item {
+  border: 1px solid #d8e5d7;
+  border-radius: 10px;
+  background: #fbfef9;
+  padding: 10px 12px;
+}
+
+.explain-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #274f31;
+}
+
+.explain-meta {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: #567258;
+}
+
+.explain-detail {
+  margin: 4px 0 8px;
+  font-size: 13px;
+  color: #4f6450;
+}
+
+.explain-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #e2ece1;
+  overflow: hidden;
+}
+
+.explain-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #9fc8a4, #3a8a54);
+}
+
 .summary {
   border-radius: 10px;
   padding: 14px;
@@ -489,6 +597,22 @@ button.danger {
   background: #dbf1dd;
   color: #1f6a3f;
   white-space: nowrap;
+}
+
+.apply-suggestion-btn {
+  margin-top: 8px;
+  border: 1px solid #9fc5a3;
+  background: #ffffff;
+  color: #225635;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.apply-suggestion-btn:hover {
+  border-color: #6fa978;
+  background: #f3fbf2;
 }
 
 .score-hero {
@@ -612,6 +736,11 @@ button.danger {
 
   .pagination {
     justify-content: flex-start;
+  }
+
+  .compare-actions {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   table,
