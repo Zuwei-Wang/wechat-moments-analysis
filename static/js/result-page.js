@@ -122,6 +122,92 @@ function renderDetailPage() {
   detailNextBtn.disabled = state.detailCurrentPage >= totalPages;
 }
 
+function renderHistoryPanel(historyData) {
+  const historySummary = document.getElementById("historySummary");
+  const historyTrendBody = document.getElementById("historyTrendBody");
+  const highRiskTagList = document.getElementById("highRiskTagList");
+  if (!historySummary || !historyTrendBody || !highRiskTagList) return;
+
+  if (!historyData || !historyData.total) {
+    historySummary.innerHTML = "<p>暂无历史记录，完成几次分析后可查看趋势与高风险标签统计。</p>";
+    historyTrendBody.innerHTML = "<tr><td colspan=\"3\">暂无数据</td></tr>";
+    highRiskTagList.innerHTML = "<li>暂无数据</li>";
+    return;
+  }
+
+  const counts = historyData.riskLevelCounts || { safe: 0, warning: 0, danger: 0 };
+  historySummary.innerHTML = `
+    <p>近 ${historyData.total} 次平均得分：<strong>${historyData.avgScore}</strong></p>
+    <p>风险等级分布：安全 ${counts.safe} / 谨慎 ${counts.warning} / 高风险 ${counts.danger}</p>
+  `;
+
+  historyTrendBody.innerHTML = "";
+  (historyData.trend || []).forEach((item) => {
+    const tr = document.createElement("tr");
+    const levelText = item.level === "safe" ? "安全" : item.level === "danger" ? "高风险" : "谨慎";
+    tr.innerHTML = `<td>${item.x}</td><td>${item.score}</td><td>${levelText}</td>`;
+    historyTrendBody.appendChild(tr);
+  });
+
+  highRiskTagList.innerHTML = "";
+  const highRiskTags = historyData.highRiskTags || [];
+  if (!highRiskTags.length) {
+    const li = document.createElement("li");
+    li.textContent = "最近记录中暂无明显高风险标签聚集。";
+    highRiskTagList.appendChild(li);
+    return;
+  }
+  highRiskTags.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = `${item.tag}: ${item.count} 次`;
+    highRiskTagList.appendChild(li);
+  });
+}
+
+function renderPersonalization(profile) {
+  const personalizationCard = document.getElementById("personalizationCard");
+  if (!personalizationCard) return;
+  if (!profile) {
+    personalizationCard.innerHTML = "<p>暂无个性化参数。</p>";
+    return;
+  }
+  personalizationCard.innerHTML = `
+    <p><strong>收益权重倍率：</strong>${Number(profile.benefitMultiplier || 1).toFixed(3)}</p>
+    <p><strong>风险权重倍率：</strong>${Number(profile.riskMultiplier || 1).toFixed(3)}</p>
+    <p><strong>最近更新时间：</strong>${profile.updatedAt || "-"}</p>
+  `;
+}
+
+async function fetchHistoryDashboard(limit = 20) {
+  try {
+    const response = await fetch(`/api/history?limit=${limit}`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "获取历史记录失败");
+    renderHistoryPanel(data);
+  } catch {
+    renderHistoryPanel(null);
+  }
+}
+
+async function clearHistoryRecords() {
+  const historyActionMessage = document.getElementById("historyActionMessage");
+  if (historyActionMessage) historyActionMessage.textContent = "";
+  const confirmed = window.confirm("确认清空全部历史记录吗？该操作不可撤销。");
+  if (!confirmed) return;
+  try {
+    const response = await fetch("/api/history/clear", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "清空历史记录失败");
+    if (historyActionMessage) historyActionMessage.textContent = `已清空 ${data.deleted || 0} 条历史记录。`;
+    fetchHistoryDashboard(20);
+  } catch (error) {
+    if (historyActionMessage) historyActionMessage.textContent = error.message || "清空历史记录失败";
+  }
+}
+
 function renderResult(result, fetchAndRenderResult) {
   const resultCard = document.getElementById("resultCard");
   const summary = document.getElementById("summary");
@@ -166,6 +252,7 @@ function renderResult(result, fetchAndRenderResult) {
   `;
 
   const copyAnalysis = result.meta.copyAnalysis;
+  renderPersonalization(result.meta.personalization || null);
   const manualTags = result.meta.manualSensitiveTags || [];
   const autoTags = result.meta.autoSensitiveTags || [];
   const mergedTags = result.meta.sensitiveTags || [];
@@ -275,7 +362,26 @@ function renderResult(result, fetchAndRenderResult) {
     bestScenarioText.textContent = "当前无法给出可见方案建议。";
   }
 
+  fetchHistoryDashboard(20);
   renderComparePanel();
+}
+
+async function submitFeedback(feedbackType, fetchAndRenderResult) {
+  const feedbackMessage = document.getElementById("feedbackMessage");
+  if (feedbackMessage) feedbackMessage.textContent = "";
+  try {
+    const response = await fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ feedbackType }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "提交反馈失败");
+    if (feedbackMessage) feedbackMessage.textContent = "反馈已记录，已按你的偏好更新个性化参数。";
+    if (state.currentPayload) fetchAndRenderResult(state.currentPayload);
+  } catch (error) {
+    if (feedbackMessage) feedbackMessage.textContent = error.message || "提交反馈失败";
+  }
 }
 
 async function fetchAndRenderResult(payload) {
@@ -310,6 +416,10 @@ export function initResultPage() {
   const applySlotABtn = document.getElementById("applySlotABtn");
   const applySlotBBtn = document.getElementById("applySlotBBtn");
   const clearCompareBtn = document.getElementById("clearCompareBtn");
+  const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+  const feedbackConservativeBtn = document.getElementById("feedbackConservativeBtn");
+  const feedbackOptimisticBtn = document.getElementById("feedbackOptimisticBtn");
+  const feedbackAccurateBtn = document.getElementById("feedbackAccurateBtn");
   const errorBox = document.getElementById("errorBox");
 
   detailPrevBtn?.addEventListener("click", () => {
@@ -334,6 +444,10 @@ export function initResultPage() {
     writeCompareSlots({ A: null, B: null });
     renderComparePanel();
   });
+  clearHistoryBtn?.addEventListener("click", () => clearHistoryRecords());
+  feedbackConservativeBtn?.addEventListener("click", () => submitFeedback("too_conservative", fetchAndRenderResult));
+  feedbackOptimisticBtn?.addEventListener("click", () => submitFeedback("too_optimistic", fetchAndRenderResult));
+  feedbackAccurateBtn?.addEventListener("click", () => submitFeedback("accurate", fetchAndRenderResult));
 
   renderComparePanel();
   const payload = loadPayload();

@@ -18,6 +18,14 @@
         <div id="summary"></div>
         <h3>文案智能分析</h3>
         <div id="copyAnalysisCard" class="copy-analysis-card"></div>
+        <h3>个性化参数校准</h3>
+        <div id="personalizationCard" class="personalization-card"></div>
+        <div class="personalization-actions">
+          <button type="button" id="feedbackConservativeBtn">这次结果偏保守（实际更好）</button>
+          <button type="button" id="feedbackOptimisticBtn">这次结果偏乐观（实际更差）</button>
+          <button type="button" id="feedbackAccurateBtn">这次结果基本准确</button>
+        </div>
+        <p id="feedbackMessage" class="hint"></p>
         <h3>为什么是这个分数</h3>
         <div id="scoreExplanationList" class="explain-list"></div>
         <h3>参数锁定与方案对比（A/B）</h3>
@@ -49,6 +57,31 @@
         <div id="actionSuggestionList" class="suggestion-list"></div>
         <h3>风险贡献 Top 3</h3>
         <ul id="topRiskList"></ul>
+        <div class="row-between">
+          <h3>历史记录与趋势分析</h3>
+          <button type="button" id="clearHistoryBtn">清空历史记录</button>
+        </div>
+        <p id="historyActionMessage" class="hint"></p>
+        <div id="historySummary" class="history-summary"></div>
+        <div class="history-grid">
+          <article class="history-card">
+            <h4>最近 N 次得分趋势</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>得分</th>
+                  <th>风险等级</th>
+                </tr>
+              </thead>
+              <tbody id="historyTrendBody"></tbody>
+            </table>
+          </article>
+          <article class="history-card">
+            <h4>高风险标签统计</h4>
+            <ul id="highRiskTagList"></ul>
+          </article>
+        </div>
         <h3>人群明细</h3>
         <table>
           <thead>

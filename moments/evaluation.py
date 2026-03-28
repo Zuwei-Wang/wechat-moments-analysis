@@ -54,6 +54,8 @@ def evaluate(
     sensitive_tags: list[str],
     segments: list[AudienceSegment],
     risk_dim_boost: dict[str, float] | None = None,
+    benefit_multiplier: float = 1.0,
+    risk_multiplier: float = 1.0,
 ) -> dict[str, Any]:
     baseline = CONTENT_BASELINE[content_type]
     time_factor = POSTING_TIME_FACTOR[posting_time]
@@ -70,7 +72,7 @@ def evaluate(
     for segment in segments:
         p_i = segment.ratio / total_ratio
         profile = AUDIENCE_TYPE_PROFILE[segment.audience_type]
-        effective_benefit = profile["benefit"] * (1 + baseline["benefit"]) * time_factor["benefit"]
+        effective_benefit = profile["benefit"] * (1 + baseline["benefit"]) * time_factor["benefit"] * benefit_multiplier
 
         risk_breakdown_raw: dict[str, float] = {}
         for dim in RISK_DIMENSION_KEYS:
@@ -79,6 +81,7 @@ def evaluate(
                 base_dim_cost
                 * (1 + baseline["risk"] + sensitivity_risk_by_dim[dim])
                 * time_factor["risk"]
+                * risk_multiplier
             )
             dim_risk = p_i * effective_dim_cost * segment.complexity_factor
             risk_breakdown_raw[dim] = dim_risk
@@ -140,6 +143,8 @@ def evaluate(
             },
             "timeBenefitFactor": time_factor["benefit"],
             "timeRiskFactor": time_factor["risk"],
+            "benefitMultiplier": round(benefit_multiplier, 4),
+            "riskMultiplier": round(risk_multiplier, 4),
         },
     }
 
@@ -154,6 +159,8 @@ def build_score_explanation(
     selected_visibility_plan: str,
     details: list[dict[str, Any]],
     risk_dim_boost: dict[str, float] | None = None,
+    benefit_multiplier: float = 1.0,
+    risk_multiplier: float = 1.0,
 ) -> dict[str, Any]:
     baseline = CONTENT_BASELINE[content_type]
     time_factor = POSTING_TIME_FACTOR[posting_time]
@@ -187,11 +194,12 @@ def build_score_explanation(
             for dim in RISK_DIMENSION_KEYS:
                 base_dim_cost = profile["cost"] * profile["risk_dim"][dim]
                 tag_impact += (
-                    p_i
-                    * base_dim_cost
-                    * time_factor["risk"]
-                    * segment.complexity_factor
-                    * SENSITIVE_RISK_DIM_FACTOR[tag][dim]
+            p_i
+            * base_dim_cost
+            * time_factor["risk"]
+            * risk_multiplier
+            * segment.complexity_factor
+            * SENSITIVE_RISK_DIM_FACTOR[tag][dim]
                 )
         if tag_impact <= 0:
             continue
@@ -213,7 +221,7 @@ def build_score_explanation(
         base_cost = 0.0
         for dim in RISK_DIMENSION_KEYS:
             base_dim_cost = profile["cost"] * profile["risk_dim"][dim]
-            base_cost += base_dim_cost * (1 + baseline["risk"] + sensitivity_risk_by_dim[dim])
+            base_cost += base_dim_cost * (1 + baseline["risk"] + sensitivity_risk_by_dim[dim]) * risk_multiplier
         complexity_penalty = p_i * base_cost * time_factor["risk"] * (segment.complexity_factor - 1)
         if complexity_penalty <= 0:
             continue
@@ -234,6 +242,8 @@ def build_score_explanation(
             sensitive_tags,
             active_segments,
             risk_dim_boost=risk_dim_boost,
+            benefit_multiplier=benefit_multiplier,
+            risk_multiplier=risk_multiplier,
         )["utilityRaw"]
         day = evaluate(
             content_type,
@@ -241,6 +251,8 @@ def build_score_explanation(
             sensitive_tags,
             active_segments,
             risk_dim_boost=risk_dim_boost,
+            benefit_multiplier=benefit_multiplier,
+            risk_multiplier=risk_multiplier,
         )["utilityRaw"]
         penalty = max(0.0, day - curr)
         if penalty > 0:
@@ -261,6 +273,8 @@ def build_score_explanation(
             sensitive_tags,
             all_segments,
             risk_dim_boost=risk_dim_boost,
+            benefit_multiplier=benefit_multiplier,
+            risk_multiplier=risk_multiplier,
         )["utilityRaw"]
         selected_score = evaluate(
             content_type,
@@ -268,6 +282,8 @@ def build_score_explanation(
             sensitive_tags,
             active_segments,
             risk_dim_boost=risk_dim_boost,
+            benefit_multiplier=benefit_multiplier,
+            risk_multiplier=risk_multiplier,
         )["utilityRaw"]
         penalty = max(0.0, all_visible_score - selected_score)
         if penalty > 0:

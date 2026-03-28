@@ -1,4 +1,5 @@
 export const ANALYSIS_PAYLOAD_KEY = "moments_analysis_payload";
+export const ANALYSIS_DRAFT_KEY = "moments_analysis_draft";
 export const COMPARE_SLOTS_KEY = "moments_analysis_compare_slots";
 export const DETAIL_PAGE_SIZE = 5;
 

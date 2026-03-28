@@ -44,6 +44,8 @@ def simulate_visibility(
     segments: list[AudienceSegment],
     blocked_names: list[str],
     risk_dim_boost: dict[str, float] | None = None,
+    benefit_multiplier: float = 1.0,
+    risk_multiplier: float = 1.0,
 ) -> dict[str, Any]:
     blocked_set = {name.strip() for name in blocked_names if name.strip()}
     scenario_defs: list[tuple[str, str, list[AudienceSegment]]] = [
@@ -75,6 +77,8 @@ def simulate_visibility(
             sensitive_tags,
             scenario_segments,
             risk_dim_boost=risk_dim_boost,
+            benefit_multiplier=benefit_multiplier,
+            risk_multiplier=risk_multiplier,
         )
         scenario_results.append(
             {

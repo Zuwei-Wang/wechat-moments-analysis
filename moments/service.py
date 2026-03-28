@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 from .copywriting import analyze_copy_text
+from .history import save_analysis_record
+from .personalization import get_profile
 from .evaluation import build_score_explanation, evaluate
 from .parsing import parse_payload
 from .suggestions import build_action_suggestions
@@ -25,6 +27,9 @@ def evaluate_request(payload: dict[str, Any]) -> dict[str, Any]:
     auto_sensitive_tags = copy_analysis["detectedTags"] if copy_analysis else []
     sensitive_tags = list(dict.fromkeys([*manual_sensitive_tags, *auto_sensitive_tags]))
     copy_risk_dim_boost = copy_analysis["dimensionBoost"] if copy_analysis else None
+    profile = get_profile()
+    benefit_multiplier = float(profile["benefitMultiplier"])
+    risk_multiplier = float(profile["riskMultiplier"])
 
     active_segments = segments_by_visibility_plan(selected_visibility_plan, segments, blocked_names)
     if not active_segments:
@@ -36,6 +41,8 @@ def evaluate_request(payload: dict[str, Any]) -> dict[str, Any]:
         sensitive_tags,
         active_segments,
         risk_dim_boost=copy_risk_dim_boost,
+        benefit_multiplier=benefit_multiplier,
+        risk_multiplier=risk_multiplier,
     )
     visibility_simulation = simulate_visibility(
         content_type,
@@ -44,6 +51,8 @@ def evaluate_request(payload: dict[str, Any]) -> dict[str, Any]:
         segments,
         blocked_names,
         risk_dim_boost=copy_risk_dim_boost,
+        benefit_multiplier=benefit_multiplier,
+        risk_multiplier=risk_multiplier,
     )
 
     result["visibilitySimulation"] = visibility_simulation
@@ -59,6 +68,8 @@ def evaluate_request(payload: dict[str, Any]) -> dict[str, Any]:
         selected_visibility_plan=selected_visibility_plan,
         details=result["details"],
         risk_dim_boost=copy_risk_dim_boost,
+        benefit_multiplier=benefit_multiplier,
+        risk_multiplier=risk_multiplier,
     )
 
     result["actionSuggestions"] = build_action_suggestions(
@@ -71,11 +82,20 @@ def evaluate_request(payload: dict[str, Any]) -> dict[str, Any]:
         selected_visibility_plan=selected_visibility_plan,
         visibility_simulation=visibility_simulation,
         risk_dim_boost=copy_risk_dim_boost,
+        benefit_multiplier=benefit_multiplier,
+        risk_multiplier=risk_multiplier,
     )
     result["meta"]["manualSensitiveTags"] = manual_sensitive_tags
     result["meta"]["autoSensitiveTags"] = auto_sensitive_tags
     result["meta"]["copyText"] = copy_text
+    result["meta"]["personalization"] = profile
     if copy_analysis:
         result["meta"]["copyAnalysis"] = copy_analysis
+
+    try:
+        history_record = save_analysis_record(payload=payload, result=result)
+        result["meta"]["historyRecord"] = history_record
+    except Exception as exc:  # pragma: no cover - 不阻断主评估流程
+        result["meta"]["historyRecord"] = {"error": str(exc)}
 
     return result

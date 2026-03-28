@@ -12,63 +12,105 @@
         <h1>开始分析</h1>
         <p>填写本次朋友圈内容和可见分组信息，下一步查看分析结果。</p>
       </header>
+      <section class="card compact-card">
+        <div class="progress-track wizard-progress"><span id="progressBarFill" style="width: 0%"></span></div>
+        <div class="wizard-headline">
+          <p id="wizardStepCount" class="wizard-step-count">步骤 1 / 6</p>
+          <p id="wizardStepTitle" class="wizard-step-title">选择内容类型</p>
+        </div>
+        <div class="wizard-meta">
+          <p id="draftStatus" class="hint"></p>
+          <button id="clearDraftBtn" type="button">清空草稿</button>
+        </div>
+      </section>
 
-      <section class="card">
-        <h2>内容设置</h2>
-        <div class="grid-2">
-          <label>
-            内容类型
-            <select id="contentType">
-              <option value="daily">日常记录</option>
-              <option value="achievement">成就展示</option>
-              <option value="emotion">情绪表达</option>
-              <option value="travel">旅游分享</option>
-              <option value="fitness">健身打卡</option>
-            </select>
-          </label>
-          <label>
-            发布时间
-            <select id="postingTime">
-              <option value="morning">早晨（06:00-10:00）</option>
-              <option value="daytime" selected>白天（10:00-18:00）</option>
-              <option value="evening">晚间（18:00-23:00）</option>
-              <option value="late_night">深夜（23:00-06:00）</option>
-            </select>
-          </label>
-          <fieldset class="sensitive-panel">
-            <legend>敏感信息</legend>
-            <p class="hint">可多选。勾选越多，模型会提高潜在风险估计。</p>
+      <section class="card step-section" data-step-section="1">
+        <h2>Step 1 · 选择内容类型</h2>
+        <label>
+          内容类型
+          <select id="contentType">
+            <option value="daily">日常记录</option>
+            <option value="achievement">成就展示</option>
+            <option value="emotion">情绪表达</option>
+            <option value="travel">旅游分享</option>
+            <option value="fitness">健身打卡</option>
+          </select>
+        </label>
+        <div class="actions split-actions">
+          <a class="button-link" href="/">返回首页</a>
+          <button id="step1NextBtn" class="primary" type="button">下一步：发布时间</button>
+        </div>
+      </section>
+
+      <section class="card step-section" data-step-section="2" hidden>
+        <h2>Step 2 · 选择发布时间</h2>
+        <label>
+          发布时间
+          <select id="postingTime">
+            <option value="morning">早晨（06:00-10:00）</option>
+            <option value="daytime" selected>白天（10:00-18:00）</option>
+            <option value="evening">晚间（18:00-23:00）</option>
+            <option value="late_night">深夜（23:00-06:00）</option>
+          </select>
+        </label>
+        <div class="actions split-actions">
+          <button id="step2PrevBtn" type="button">上一步</button>
+          <button id="step2NextBtn" class="primary" type="button">下一步：敏感信息</button>
+        </div>
+      </section>
+
+      <section class="card step-section" data-step-section="3" hidden>
+        <h2>Step 3 · 选择敏感信息</h2>
+        <fieldset class="sensitive-panel">
+          <legend>敏感信息</legend>
+          <p class="hint">先勾常见项；不常见标签可在“更多标签”里补充。</p>
+          <div class="tags">
+            <label class="tag-item"><input type="checkbox" value="money" /> 金钱</label>
+            <label class="tag-item"><input type="checkbox" value="emotion" /> 强情绪</label>
+            <label class="tag-item"><input type="checkbox" value="relationship" /> 关系信息</label>
+            <label class="tag-item"><input type="checkbox" value="location" /> 定位行程</label>
+            <label class="tag-item"><input type="checkbox" value="luxury" /> 奢侈消费</label>
+            <label class="tag-item"><input type="checkbox" value="complaint" /> 吐槽抱怨</label>
+          </div>
+          <details class="extra-tags">
+            <summary>更多标签</summary>
             <div class="tags">
-              <label class="tag-item"><input type="checkbox" value="money" /> 金钱</label>
-              <label class="tag-item"><input type="checkbox" value="emotion" /> 强情绪</label>
-              <label class="tag-item"><input type="checkbox" value="relationship" /> 关系信息</label>
-              <label class="tag-item"><input type="checkbox" value="location" /> 定位行程</label>
               <label class="tag-item"><input type="checkbox" value="politics" /> 政治观点</label>
               <label class="tag-item"><input type="checkbox" value="work_confidential" /> 工作机密</label>
               <label class="tag-item"><input type="checkbox" value="health" /> 健康/病情</label>
               <label class="tag-item"><input type="checkbox" value="family_conflict" /> 家庭矛盾</label>
               <label class="tag-item"><input type="checkbox" value="children" /> 孩子信息</label>
               <label class="tag-item"><input type="checkbox" value="appearance" /> 外貌身材</label>
-              <label class="tag-item"><input type="checkbox" value="luxury" /> 奢侈消费</label>
-              <label class="tag-item"><input type="checkbox" value="complaint" /> 吐槽抱怨</label>
             </div>
-          </fieldset>
-          <label class="copy-input">
-            朋友圈文案（可选）
-            <textarea
-              id="copyText"
-              rows="4"
-              placeholder="输入你准备发的文案，系统会自动评估情绪强度/炫耀程度/隐私强度并修正风险参数"
-            ></textarea>
-            <span class="hint">不输入则仅使用手动勾选的敏感信息进行评估。</span>
-          </label>
+          </details>
+        </fieldset>
+        <div class="actions split-actions">
+          <button id="step3PrevBtn" type="button">上一步</button>
+          <button id="step3NextBtn" class="primary" type="button">下一步：文案</button>
         </div>
       </section>
 
-      <section class="card">
+      <section class="card step-section" data-step-section="4" hidden>
+        <h2>Step 4 · 填写文案（可选）</h2>
+        <label class="copy-input">
+          朋友圈文案
+          <textarea
+            id="copyText"
+            rows="6"
+            placeholder="输入你准备发的文案，系统会自动评估情绪强度/炫耀程度/隐私强度并修正风险参数"
+          ></textarea>
+          <span class="hint">不输入也可以，系统会仅根据你勾选的敏感信息评估。</span>
+        </label>
+        <div class="actions split-actions">
+          <button id="step4PrevBtn" type="button">上一步</button>
+          <button id="step4NextBtn" class="primary" type="button">下一步：受众</button>
+        </div>
+      </section>
+
+      <section class="card step-section" data-step-section="5" hidden>
         <div class="row-between">
           <div class="title-with-help">
-            <h2>谁会看到这条朋友圈</h2>
+            <h2>Step 5 · 受众设置</h2>
             <details class="help-popover">
               <summary title="查看字段说明">?</summary>
               <div class="help-content">
@@ -76,14 +118,13 @@
                 <p><strong>分组可见：</strong>用于“仅分组可见”模拟。勾选表示这类人会出现在该方案里；不勾选表示会被该方案排除。</p>
                 <p><strong>大概占比：</strong>这类人群约占你朋友圈受众的比例，0.3 表示约 30%。</p>
                 <p><strong>受众类型：</strong>算法会根据类型自动估算该人群的好处/风险基线。</p>
-                <p><strong>算法好处分 / 算法风险分：</strong>系统自动计算，并在分析结果里展示。</p>
                 <p><strong>关系敏感度：</strong>关系越复杂，风险越容易被放大。</p>
               </div>
             </details>
           </div>
           <button id="addAudience" type="button">+ 添加受众</button>
         </div>
-        <p class="hint">填写方式：拖动占比滑块设置大概比例；选择受众类型后，算法会自动估算好处/风险并在分析结果展示。</p>
+        <p class="hint">拖动占比滑块设置比例；可通过“分组可见”控制受众范围。</p>
         <table>
           <thead>
             <tr>
@@ -97,12 +138,21 @@
           </thead>
           <tbody id="audienceBody"></tbody>
         </table>
+        <div class="actions split-actions">
+          <button id="step5PrevBtn" type="button">上一步</button>
+          <button id="step5NextBtn" class="primary" type="button">下一步：可见与确认</button>
+        </div>
+      </section>
+
+      <section class="card step-section" data-step-section="6" hidden>
+        <h2>Step 6 · 可见与确认</h2>
         <label>
           屏蔽哪些人群（用于“屏蔽指定人群”模拟，多个名称用逗号分隔）
           <input id="blockedAudienceInput" placeholder="如：不熟联系人, 前任" />
         </label>
+        <div id="reviewSummary" class="review-summary"></div>
         <div class="actions split-actions">
-          <a class="button-link" href="/">返回首页</a>
+          <button id="step6PrevBtn" type="button">上一步</button>
           <button id="startAnalysisBtn" class="primary" type="button">查看分析结果</button>
         </div>
       </section>

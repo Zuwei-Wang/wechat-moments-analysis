@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from flask import Flask, jsonify, render_template, request
 
-from moments import ValidationError, evaluate_request
+from moments import ValidationError, apply_feedback, clear_history_records, evaluate_request, get_history_dashboard, get_profile
 from moments.constants import (
     AUDIENCE_TYPE_PROFILE,
     COMPLEXITY_MAP,
@@ -44,6 +44,42 @@ def evaluate_api():
     except ValidationError as exc:
         return jsonify({"error": str(exc)}), 400
     return jsonify(result)
+
+
+@app.route("/api/history", methods=["GET"])
+def history_api():
+    limit_text = request.args.get("limit", "20")
+    try:
+        limit = int(limit_text)
+    except ValueError:
+        return jsonify({"error": "limit 必须为整数"}), 400
+    data = get_history_dashboard(limit=limit)
+    return jsonify(data)
+
+
+@app.route("/api/history/clear", methods=["POST"])
+def history_clear_api():
+    result = clear_history_records()
+    return jsonify({"ok": True, **result})
+
+
+@app.route("/api/personalization-profile", methods=["GET"])
+def personalization_profile_api():
+    return jsonify(get_profile())
+
+
+@app.route("/api/feedback", methods=["POST"])
+def feedback_api():
+    payload = request.get_json(silent=True) or {}
+    feedback_type = str(payload.get("feedbackType", "")).strip()
+    note = str(payload.get("note", "")).strip()
+    if not feedback_type:
+        return jsonify({"error": "feedbackType 不能为空"}), 400
+    try:
+        profile = apply_feedback(feedback_type=feedback_type, note=note)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+    return jsonify({"ok": True, "profile": profile})
 
 
 if __name__ == "__main__":

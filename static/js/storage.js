@@ -1,4 +1,4 @@
-import { ANALYSIS_PAYLOAD_KEY, COMPARE_SLOTS_KEY } from "./constants.js";
+import { ANALYSIS_DRAFT_KEY, ANALYSIS_PAYLOAD_KEY, COMPARE_SLOTS_KEY } from "./constants.js";
 
 export function deepClone(obj) {
   return JSON.parse(JSON.stringify(obj));
@@ -24,6 +24,34 @@ export function loadPayload() {
   const text = sessionStorage.getItem(ANALYSIS_PAYLOAD_KEY);
   if (!text) return null;
   return normalizePayload(JSON.parse(text));
+}
+
+export function saveDraft(payload) {
+  localStorage.setItem(
+    ANALYSIS_DRAFT_KEY,
+    JSON.stringify({
+      payload: normalizePayload(payload),
+      savedAt: new Date().toISOString(),
+    })
+  );
+}
+
+export function loadDraft() {
+  const raw = localStorage.getItem(ANALYSIS_DRAFT_KEY);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      payload: normalizePayload(parsed.payload || {}),
+      savedAt: parsed.savedAt || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function clearDraft() {
+  localStorage.removeItem(ANALYSIS_DRAFT_KEY);
 }
 
 export function readCompareSlots() {

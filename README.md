@@ -150,7 +150,7 @@ U = Σ p_i (B_i - C_i · k_i)
 
 ### 🔹 历史记录与行为分析
 
-记录用户历史评估数据：
+记录用户历史评估数据（已支持基础能力）：
 
 - 哪类内容最安全
 - 哪类内容风险最高
@@ -179,8 +179,8 @@ U = Σ p_i (B_i - C_i · k_i)
 
 4. 历史记录与趋势分析  
 优先级：P1  
-状态：⬜ 待开发  
-验收标准：落库保存分析记录，支持最近 N 次趋势和高风险标签统计。
+状态：✅ 已完成  
+验收标准：落库保存分析记录，支持最近 N 次趋势和高风险标签统计。（已支持）
 
 5. 文案智能分析  
 优先级：P1  
@@ -189,13 +189,13 @@ U = Σ p_i (B_i - C_i · k_i)
 
 6. 个性化参数校准  
 优先级：P1  
-状态：⬜ 待开发  
-验收标准：基于用户反馈动态调整个人权重，并在后续分析中生效。
+状态：✅ 已完成  
+验收标准：基于用户反馈动态调整个人权重，并在后续分析中生效。（已支持）
 
 7. 交互体验优化  
 优先级：P1  
-状态：⬜ 待开发  
-验收标准：完成步骤进度条、未保存提醒、草稿自动恢复。
+状态：✅ 已完成  
+验收标准：完成步骤进度条、未保存提醒、草稿自动恢复。（已支持）
 
 8. 工程质量建设  
 优先级：P0  
@@ -210,12 +210,12 @@ U = Σ p_i (B_i - C_i · k_i)
 
 ---
 
-## 🛠️ 技术栈（建议）
+## 🛠️ 技术栈（当前使用）
 
-- 前端：React / Next.js
-- 后端：Node.js / Express 或 Python Flask
-- 数据库：SQLite / MySQL
-- 可视化：Chart.js / ECharts
+- 前端：HTML 模板 + Vanilla JS（ES Modules）+ CSS
+- 后端：Python + Flask
+- 数据库：SQLite（历史记录与个性化参数）
+- 运行环境：Python 3
 
 ---
 
@@ -226,11 +226,14 @@ U = Σ p_i (B_i - C_i · k_i)
 ├── app.py                      # Flask 入口与路由
 ├── moments/                    # 后端业务模块
 │   ├── constants.py            # 模型常量与系数
+│   ├── copywriting.py          # 文案分析（情绪/炫耀/隐私强度）
 │   ├── types.py                # 数据类型与错误定义
 │   ├── parsing.py              # 请求参数解析与校验
 │   ├── evaluation.py           # 评分、三维风险、分数解释
 │   ├── visibility.py           # 分组可见方案计算
 │   ├── suggestions.py          # 行动建议与提分估计
+│   ├── history.py              # 历史记录落库与趋势统计
+│   ├── personalization.py      # 个性化参数校准（反馈学习）
 │   └── service.py              # 业务编排（API 调用入口）
 ├── templates/                  # 页面模板
 │   ├── index.html
@@ -274,12 +277,12 @@ U = Σ p_i (B_i - C_i · k_i)
 
 ## 📌 项目状态
 
-🚧 开发中（MVP阶段）
+🚧 开发中（MVP v1.2.0）
 
 最新版本重点升级：
-- 三页面流程（首页 / 开始分析 / 分析结果）
-- 三维风险模型（误解风险 / 关系风险 / 隐私风险）
-- 行动建议引擎（含预计提分幅度）
+- 历史记录落库与趋势分析（支持清空历史）
+- 个性化参数校准（反馈学习并在后续评估生效）
+- 开始分析页重构为多步向导（草稿自动保存、离页提醒）
 
 ---
 
@@ -289,7 +292,7 @@ U = Σ p_i (B_i - C_i · k_i)
 
 ---
 
-## ✅ 当前已实现（MVP v0）
+## ✅ 当前已实现（MVP v1.2.0）
 
 - 提供 Web 表单输入：
   - 内容类型
@@ -311,6 +314,9 @@ U = Σ p_i (B_i - C_i · k_i)
   - 人群明细贡献拆分
   - 发布建议（建议发布 / 谨慎发布 / 不建议发布）
   - 分组可见方案对比（全部可见 / 仅分组可见 / 屏蔽指定人群）
+  - 历史记录与趋势统计（最近 N 次得分、风险等级分布、高风险标签统计）
+  - 历史记录一键清空（带二次确认）
+  - 个性化参数校准（偏保守 / 偏乐观 / 准确反馈）
 
 ---
 
@@ -334,6 +340,10 @@ python app.py
 ## 🔌 API（MVP）
 
 - `POST /api/evaluate`
+- `GET /api/history?limit=20`
+- `POST /api/history/clear`
+- `GET /api/personalization-profile`
+- `POST /api/feedback`
 - `Content-Type: application/json`
 
 示例请求：
@@ -342,7 +352,9 @@ python app.py
 {
   "contentType": "achievement",
   "postingTime": "evening",
+  "copyText": "今天升职加薪，想低调庆祝一下。",
   "sensitiveTags": ["money"],
+  "selectedVisibilityPlan": "all_visible",
   "blockedAudienceNames": ["不熟联系人"],
   "audiences": [
     { "name": "家人", "ratio": 0.2, "audienceType": "family", "complexity": "low", "inGroup": true },

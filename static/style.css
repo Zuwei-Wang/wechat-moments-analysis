@@ -153,6 +153,91 @@ p {
   box-shadow: 0 5px 20px rgba(22, 50, 24, 0.05);
 }
 
+.compact-card {
+  padding: 12px 14px;
+}
+
+.progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #e3ede2;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8bc29a, #2f7a4f);
+  transition: width 160ms ease;
+}
+
+.wizard-progress {
+  margin-bottom: 10px;
+}
+
+.wizard-headline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wizard-step-count {
+  margin: 0;
+  font-size: 13px;
+  color: #436347;
+  font-weight: 700;
+}
+
+.wizard-step-title {
+  margin: 0;
+  font-size: 15px;
+  color: #1f2a1f;
+  font-weight: 700;
+}
+
+.wizard-meta {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wizard-meta .hint {
+  margin: 0;
+}
+
+.extra-tags {
+  margin-top: 10px;
+}
+
+.extra-tags > summary {
+  cursor: pointer;
+  color: #3f5e44;
+  font-size: 13px;
+  user-select: none;
+}
+
+.extra-tags > div {
+  margin-top: 8px;
+}
+
+.review-summary {
+  border: 1px solid #dbe9da;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fcfffb;
+}
+
+.review-summary p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #425744;
+}
+
 .help-popover {
   position: relative;
   z-index: 3;
@@ -446,6 +531,61 @@ button.danger {
   color: #4f6450;
 }
 
+.history-summary {
+  border: 1px solid #d8e5d7;
+  border-radius: 10px;
+  background: #fbfef9;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+
+.history-summary p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #4f6450;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.history-card {
+  border: 1px solid #d8e5d7;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 10px;
+}
+
+.history-card h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #315238;
+}
+
+.personalization-card {
+  border: 1px solid #d8e5d7;
+  border-radius: 10px;
+  background: #fbfef9;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.personalization-card p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #4f6450;
+}
+
+.personalization-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .explain-item {
   border: 1px solid #d8e5d7;
   border-radius: 10px;
@@ -708,6 +848,16 @@ button.danger {
 }
 
 @media (max-width: 880px) {
+  .wizard-headline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .wizard-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .grid-2 {
     grid-template-columns: 1fr;
   }
@@ -722,6 +872,10 @@ button.danger {
   }
 
   .risk-dimension-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .history-grid {
     grid-template-columns: 1fr;
   }
 

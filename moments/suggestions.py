@@ -17,6 +17,8 @@ def build_action_suggestions(
     selected_visibility_plan: str,
     visibility_simulation: dict[str, Any],
     risk_dim_boost: dict[str, float] | None = None,
+    benefit_multiplier: float = 1.0,
+    risk_multiplier: float = 1.0,
 ) -> list[dict[str, Any]]:
     suggestions: list[dict[str, Any]] = []
     top_dim = risk_dimensions[0]["key"] if risk_dimensions else None
@@ -28,6 +30,8 @@ def build_action_suggestions(
             next_tags,
             next_segments,
             risk_dim_boost=risk_dim_boost,
+            benefit_multiplier=benefit_multiplier,
+            risk_multiplier=risk_multiplier,
         )["utilityScore"]
 
     def _with_delta(item: dict[str, Any], simulated_score: float | None) -> dict[str, Any]:
