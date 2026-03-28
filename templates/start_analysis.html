@@ -10,19 +10,8 @@
     <main class="container">
       <header>
         <h1>开始分析</h1>
-        <p>填写本次朋友圈内容和可见分组信息，下一步查看分析结果。</p>
+        <p>按步骤向下填写，完成后直接分析。</p>
       </header>
-      <section class="card compact-card">
-        <div class="progress-track wizard-progress"><span id="progressBarFill" style="width: 0%"></span></div>
-        <div class="wizard-headline">
-          <p id="wizardStepCount" class="wizard-step-count">步骤 1 / 6</p>
-          <p id="wizardStepTitle" class="wizard-step-title">选择内容类型</p>
-        </div>
-        <div class="wizard-meta">
-          <p id="draftStatus" class="hint"></p>
-          <button id="clearDraftBtn" type="button">清空草稿</button>
-        </div>
-      </section>
 
       <section class="card step-section" data-step-section="1">
         <h2>Step 1 · 选择内容类型</h2>
@@ -36,9 +25,11 @@
             <option value="fitness">健身打卡</option>
           </select>
         </label>
-        <div class="actions split-actions">
+        <div class="actions">
           <a class="button-link" href="/">返回首页</a>
-          <button id="step1NextBtn" class="primary" type="button">下一步：发布时间</button>
+        </div>
+        <div class="step-next-wrap">
+          <button id="step1NextBtn" class="step-next-arrow" type="button" aria-label="下一步：发布时间">↓</button>
         </div>
       </section>
 
@@ -53,9 +44,8 @@
             <option value="late_night">深夜（23:00-06:00）</option>
           </select>
         </label>
-        <div class="actions split-actions">
-          <button id="step2PrevBtn" type="button">上一步</button>
-          <button id="step2NextBtn" class="primary" type="button">下一步：敏感信息</button>
+        <div class="step-next-wrap">
+          <button id="step2NextBtn" class="step-next-arrow" type="button" aria-label="下一步：敏感信息">↓</button>
         </div>
       </section>
 
@@ -84,9 +74,8 @@
             </div>
           </details>
         </fieldset>
-        <div class="actions split-actions">
-          <button id="step3PrevBtn" type="button">上一步</button>
-          <button id="step3NextBtn" class="primary" type="button">下一步：文案</button>
+        <div class="step-next-wrap">
+          <button id="step3NextBtn" class="step-next-arrow" type="button" aria-label="下一步：文案">↓</button>
         </div>
       </section>
 
@@ -101,9 +90,8 @@
           ></textarea>
           <span class="hint">不输入也可以，系统会仅根据你勾选的敏感信息评估。</span>
         </label>
-        <div class="actions split-actions">
-          <button id="step4PrevBtn" type="button">上一步</button>
-          <button id="step4NextBtn" class="primary" type="button">下一步：受众</button>
+        <div class="step-next-wrap">
+          <button id="step4NextBtn" class="step-next-arrow" type="button" aria-label="下一步：受众">↓</button>
         </div>
       </section>
 
@@ -138,9 +126,8 @@
           </thead>
           <tbody id="audienceBody"></tbody>
         </table>
-        <div class="actions split-actions">
-          <button id="step5PrevBtn" type="button">上一步</button>
-          <button id="step5NextBtn" class="primary" type="button">下一步：可见与确认</button>
+        <div class="step-next-wrap">
+          <button id="step5NextBtn" class="step-next-arrow" type="button" aria-label="下一步：可见与确认">↓</button>
         </div>
       </section>
 
@@ -151,14 +138,22 @@
           <input id="blockedAudienceInput" placeholder="如：不熟联系人, 前任" />
         </label>
         <div id="reviewSummary" class="review-summary"></div>
+        <p id="draftStatus" class="hint"></p>
         <div class="actions split-actions">
-          <button id="step6PrevBtn" type="button">上一步</button>
+          <button id="clearDraftBtn" type="button">清空草稿</button>
           <button id="startAnalysisBtn" class="primary" type="button">查看分析结果</button>
         </div>
       </section>
 
       <p class="error" id="errorBox" hidden></p>
     </main>
+    <aside class="bottom-progress-dock" aria-live="polite">
+      <div class="bottom-progress-head">
+        <p id="wizardStepCount" class="wizard-step-count">步骤 1 / 6</p>
+        <p id="wizardStepTitle" class="wizard-step-title">选择内容类型</p>
+      </div>
+      <div class="progress-track wizard-progress"><span id="progressBarFill" style="width: 0%"></span></div>
+    </aside>
     <script type="module" src="/static/js/main.js"></script>
   </body>
 </html>

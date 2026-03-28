@@ -108,20 +108,21 @@ function visibilityPlanLabel(plan) {
   return "全部可见";
 }
 
-function stepHint(step) {
+function stepTitle(step) {
   return {
-    1: "Step 1/6：选择内容类型",
-    2: "Step 2/6：选择发布时间",
-    3: "Step 3/6：勾选敏感信息",
-    4: "Step 4/6：填写文案（可选）",
-    5: "Step 5/6：设置受众结构",
-    6: "Step 6/6：确认可见范围并提交",
+    1: "选择内容类型",
+    2: "选择发布时间",
+    3: "勾选敏感信息",
+    4: "填写文案（可选）",
+    5: "设置受众结构",
+    6: "确认并提交",
   }[step];
 }
 
 export function initStartPage() {
   const audienceBody = document.getElementById("audienceBody");
   const addAudienceBtn = document.getElementById("addAudience");
+  const startAnalysisBtn = document.getElementById("startAnalysisBtn");
   const clearDraftBtn = document.getElementById("clearDraftBtn");
   const progressBarFill = document.getElementById("progressBarFill");
   const wizardStepCount = document.getElementById("wizardStepCount");
@@ -130,10 +131,10 @@ export function initStartPage() {
   const reviewSummary = document.getElementById("reviewSummary");
   const errorBox = document.getElementById("errorBox");
   const stepSections = Array.from(document.querySelectorAll("[data-step-section]"));
-  const startAnalysisBtn = document.getElementById("startAnalysisBtn");
   if (!audienceBody || !addAudienceBtn || !startAnalysisBtn) return;
 
-  let currentStep = 1;
+  let activeStep = 1;
+  let unlockedStep = 1;
   let hasUnsubmittedChanges = false;
   let isNavigating = false;
   let draftTimer = null;
@@ -151,6 +152,17 @@ export function initStartPage() {
   };
 
   const getSnapshot = () => JSON.stringify(collectPayload() || {});
+
+  const refreshProgress = () => {
+    const percent = Math.round(((unlockedStep - 1) / (TOTAL_STEPS - 1)) * 100);
+    if (progressBarFill) {
+      progressBarFill.style.width = `${percent}%`;
+      progressBarFill.title = `当前进度：${stepTitle(activeStep)}`;
+      progressBarFill.setAttribute("aria-label", `当前流程进度 ${percent}%`);
+    }
+    if (wizardStepCount) wizardStepCount.textContent = `步骤 ${activeStep} / ${TOTAL_STEPS}`;
+    if (wizardStepTitle) wizardStepTitle.textContent = stepTitle(activeStep);
+  };
 
   const validateStep1 = () => {
     const payload = collectPayload();
@@ -194,27 +206,13 @@ export function initStartPage() {
     return true;
   };
 
-  const canReachStep = (targetStep) => {
-    if (targetStep <= 1) return true;
-    if (!validateStep1()) return false;
-    if (targetStep <= 2) return true;
-    if (!validateStep2()) return false;
-    if (targetStep <= 3) return true;
-    if (!validateStep3()) return false;
-    if (targetStep <= 4) return true;
-    if (!validateStep4()) return false;
-    if (targetStep <= 5) return true;
-    return validateStep5();
-  };
-
-  const refreshProgress = () => {
-    if (!progressBarFill) return;
-    const percent = Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100);
-    progressBarFill.style.width = `${percent}%`;
-    progressBarFill.title = stepHint(currentStep);
-    progressBarFill.setAttribute("aria-label", `当前流程进度 ${percent}%`);
-    if (wizardStepCount) wizardStepCount.textContent = `步骤 ${currentStep} / ${TOTAL_STEPS}`;
-    if (wizardStepTitle) wizardStepTitle.textContent = stepHint(currentStep)?.replace(/^Step \d+\/\d+：/, "") || "";
+  const validateCurrentStep = (step) => {
+    if (step === 1) return validateStep1();
+    if (step === 2) return validateStep2();
+    if (step === 3) return validateStep3();
+    if (step === 4) return validateStep4();
+    if (step === 5) return validateStep5();
+    return true;
   };
 
   const renderReview = () => {
@@ -239,13 +237,30 @@ export function initStartPage() {
     `;
   };
 
-  const renderStep = () => {
+  const renderSections = () => {
     stepSections.forEach((section) => {
       const step = Number(section.dataset.stepSection || 1);
-      section.hidden = step !== currentStep;
+      section.hidden = step > unlockedStep;
+      section.classList.toggle("active-step", step === activeStep);
+      const nextWrap = section.querySelector(".step-next-wrap");
+      if (nextWrap) {
+        // 已完成并解锁到下一步后，隐藏当前卡片底部箭头
+        nextWrap.hidden = step < unlockedStep;
+      }
     });
-    if (currentStep === 6) renderReview();
+    if (unlockedStep >= 6) renderReview();
     refreshProgress();
+  };
+
+  const unlockNextStep = (current) => {
+    if (!validateCurrentStep(current)) return;
+    clearError();
+    const next = Math.min(TOTAL_STEPS, current + 1);
+    unlockedStep = Math.max(unlockedStep, next);
+    activeStep = next;
+    renderSections();
+    const nextSection = stepSections.find((section) => Number(section.dataset.stepSection || 1) === next);
+    nextSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const scheduleDraftSave = () => {
@@ -259,17 +274,10 @@ export function initStartPage() {
   };
 
   const markChanged = () => {
-    if (currentStep === 6) renderReview();
+    if (unlockedStep >= 6) renderReview();
     const snapshot = getSnapshot();
     hasUnsubmittedChanges = snapshot !== lastSubmittedSnapshot;
     scheduleDraftSave();
-  };
-
-  const goToStep = (targetStep) => {
-    if (!canReachStep(targetStep)) return;
-    clearError();
-    currentStep = Math.max(1, Math.min(TOTAL_STEPS, targetStep));
-    renderStep();
   };
 
   const applyPayloadToForm = (payload) => {
@@ -290,9 +298,9 @@ export function initStartPage() {
     }
   };
 
-  const bindStepButton = (id, step) => {
+  const bindNextButton = (id, step) => {
     const el = document.getElementById(id);
-    el?.addEventListener("click", () => goToStep(step));
+    el?.addEventListener("click", () => unlockNextStep(step));
   };
 
   const draft = loadDraft();
@@ -326,23 +334,18 @@ export function initStartPage() {
 
   lastSubmittedSnapshot = getSnapshot();
   hasUnsubmittedChanges = false;
-  renderStep();
+  renderSections();
 
   document.querySelectorAll("#contentType, #postingTime, #blockedAudienceInput, #copyText, fieldset input[type='checkbox']").forEach((el) => {
     el.addEventListener("input", markChanged);
     el.addEventListener("change", markChanged);
   });
 
-  bindStepButton("step1NextBtn", 2);
-  bindStepButton("step2PrevBtn", 1);
-  bindStepButton("step2NextBtn", 3);
-  bindStepButton("step3PrevBtn", 2);
-  bindStepButton("step3NextBtn", 4);
-  bindStepButton("step4PrevBtn", 3);
-  bindStepButton("step4NextBtn", 5);
-  bindStepButton("step5PrevBtn", 4);
-  bindStepButton("step5NextBtn", 6);
-  bindStepButton("step6PrevBtn", 5);
+  bindNextButton("step1NextBtn", 1);
+  bindNextButton("step2NextBtn", 2);
+  bindNextButton("step3NextBtn", 3);
+  bindNextButton("step4NextBtn", 4);
+  bindNextButton("step5NextBtn", 5);
 
   addAudienceBtn.addEventListener("click", () => {
     createAudienceRow(audienceBody, {}, markChanged);
@@ -362,7 +365,7 @@ export function initStartPage() {
 
   startAnalysisBtn.addEventListener("click", () => {
     clearError();
-    if (!canReachStep(6)) return;
+    if (!validateStep1() || !validateStep2() || !validateStep4() || !validateStep5()) return;
     const payload = collectPayload();
     if (!payload) return;
     try {

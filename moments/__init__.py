@@ -3,7 +3,10 @@ from .personalization import apply_feedback, get_profile
 from .service import evaluate_request
 from .types import ValidationError
 
+__version__ = "1.2.1"
+
 __all__ = [
+    "__version__",
     "apply_feedback",
     "clear_history_records",
     "evaluate_request",

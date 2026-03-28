@@ -28,6 +28,7 @@ body {
   margin: 36px auto;
   display: grid;
   gap: 18px;
+  padding-bottom: 120px;
 }
 
 .home-page .container {
@@ -210,6 +211,11 @@ p {
   margin: 0;
 }
 
+.active-step {
+  border-color: #b8d7b8;
+  box-shadow: 0 8px 24px rgba(28, 72, 41, 0.08);
+}
+
 .extra-tags {
   margin-top: 10px;
 }
@@ -236,6 +242,32 @@ p {
   margin: 6px 0;
   font-size: 14px;
   color: #425744;
+}
+
+.bottom-progress-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  padding: 10px 16px 14px;
+  background: rgba(245, 251, 244, 0.96);
+  border-top: 1px solid #cde1cb;
+  backdrop-filter: blur(6px);
+}
+
+.bottom-progress-head {
+  width: min(1040px, 92vw);
+  margin: 0 auto 6px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bottom-progress-dock .progress-track {
+  width: min(1040px, 92vw);
+  margin: 0 auto;
 }
 
 .help-popover {
@@ -455,6 +487,35 @@ button.danger {
 .actions.split-actions {
   justify-content: space-between;
   align-items: center;
+}
+
+.step-next-wrap {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.step-next-wrap[hidden] {
+  display: none !important;
+}
+
+.step-next-arrow {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--brand);
+  background: var(--brand);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.step-next-arrow:hover {
+  background: var(--brand-strong);
+  border-color: var(--brand-strong);
 }
 
 .pagination {
@@ -856,6 +917,12 @@ button.danger {
   .wizard-meta {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .bottom-progress-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
   }
 
   .grid-2 {
